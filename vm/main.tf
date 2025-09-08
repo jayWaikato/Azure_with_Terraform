@@ -10,8 +10,8 @@ resource "azurerm_public_ip" "vm1" {
   allocation_method   = "Static"
 }
 
-data "azurerm_subnet" "alpha" {
-  name                 = "snet-alpha"
+data "azurerm_subnet" "bravo" {
+  name                 = "snet-bravo"
   virtual_network_name = "vnet-network-dev"
   resource_group_name  = "rg-network-dev"
 }
@@ -23,7 +23,7 @@ resource "azurerm_network_interface" "vm1" {
 
   ip_configuration {
     name                          = "public"
-    subnet_id                     = data.azurerm_subnet.alpha.id
+    subnet_id                     = data.azurerm_subnet.bravo.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.vm1.id
   }
@@ -34,16 +34,34 @@ resource "tls_private_key" "vm1" {
   rsa_bits  = 4096
 }
 
-resource "local_file" "private_key" {
-  content         = tls_private_key.vm1.private_key_pem
-  filename        = pathexpand("~/.ssh/vm1")
-  file_permission = "0600"
+# resource "local_file" "private_key" {
+#   content         = tls_private_key.vm1.private_key_pem
+#   filename        = pathexpand("~/.ssh/vm1")
+#   file_permission = "0600"
+# }
+
+# resource "local_file" "public_key" {
+#   content  = tls_private_key.vm1.public_key_openssh
+#   filename = pathexpand("~/.ssh/vm1.pub")
+#   # depends_on = [local_file.private_key]
+# }
+
+data "azurerm_key_vault" "main" {
+  name                = "kv-devops-dev-tefpsk"
+  resource_group_name = "rg-devops-dev"
 }
 
-resource "local_file" "public_key" {
-  content  = tls_private_key.vm1.public_key_openssh
-  filename = pathexpand("~/.ssh/vm1.pub")
-  # depends_on = [local_file.private_key]
+
+resource "azurerm_key_vault_secret" "vm1_ssh_private" {
+  name         = "vm1-ssh-private"
+  value        = tls_private_key.vm1.private_key_pem
+  key_vault_id = data.azurerm_key_vault.main.id
+}
+
+resource "azurerm_key_vault_secret" "vm1_ssh_public" {
+  name         = "vm1-ssh-public"
+  value        = tls_private_key.vm1.public_key_openssh
+  key_vault_id = data.azurerm_key_vault.main.id
 }
 
 
@@ -56,6 +74,10 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   network_interface_ids = [
     azurerm_network_interface.vm1.id,
   ]
+
+  identity {
+    type = "SystemAssigned"
+  }
 
   admin_ssh_key {
     username   = "adminuser"
@@ -74,3 +96,22 @@ resource "azurerm_linux_virtual_machine" "vm1" {
     version   = "latest"
   }
 }
+
+resource "azurerm_virtual_machine_extension" "entra_id_login" {
+  name                       = "${azurerm_linux_virtual_machine.vm1.name}-AADSSHLogin"
+  virtual_machine_id         = azurerm_linux_virtual_machine.vm1.id
+  publisher                  = "Microsoft.Azure.ActiveDirectory"
+  type                       = "AADSSHLoginForLinux"
+  type_handler_version       = "1.0"
+  auto_upgrade_minor_version = true
+}
+
+data "azurerm_client_config" "current" {}
+
+resource "azurerm_role_assignment" "entra_id_user_login" {
+  principal_id         = azuread_group.remote_access_users.object_id
+  role_definition_name = "Virtual Machine User Login"
+  scope                = azurerm_linux_virtual_machine.vm1.id
+}
+
+
