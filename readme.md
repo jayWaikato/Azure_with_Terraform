@@ -130,7 +130,6 @@ flowchart TB
 ---
 
 ## 🏅 Suggested Badges
-(Add once CI/CD pipelines are integrated)  
 - ![Terraform](https://img.shields.io/badge/Terraform-1.x-blueviolet)  
 - ![Build](https://img.shields.io/github/actions/workflow/status/jayWaikato/Azure_with_Terraform/ci.yml)  
 - ![License](https://img.shields.io/github/license/jayWaikato/Azure_with_Terraform)  
