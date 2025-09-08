@@ -16,8 +16,6 @@ It is designed for **repeatability, scalability, and security** across multiple 
 - 💻 **Virtual Machines** → Public IP, subnet attachment, and remote access users  
 - 📊 **Observability** → Log Analytics Workspace for monitoring and logging  
 - ⚙️ **Environment Separation** → `dev.tfvars` and `prod.tfvars` for consistent deployments  
-- 🛠 **Debug Scripts** → `.debug-dev.sh` and `.debug-prod.sh` for quick troubleshooting  
-
 ---
 
 ## 🛠 Tech Stack
@@ -65,7 +63,7 @@ terraform apply -var-file=env/prod.tfvars
 ## 🖥 Usage Example – VM Deployment
 ```bash
 cd vm
-terraform apply -var-file=env/dev.tfvars
+./.debug-dev.sh apply -var-file=env/dev.tfvars
 ```
 
 This will:  
@@ -123,7 +121,7 @@ flowchart TB
 
 ---
 
-## 🔍 Debugging
+## 🔍 Scripts
 ```bash
 ./.debug-dev.sh
 ./.debug-prod.sh
