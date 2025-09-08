@@ -1,98 +1,140 @@
-📘 Azure Infrastructure with Terraform
+# 🌐 Azure Infrastructure with Terraform  
+*Automated, modular, and environment-aware Infrastructure as Code (IaC) for Microsoft Azure*  
 
-Modular IaC framework for provisioning and managing Azure cloud environments
+---
 
-🌍 Purpose
+## 📖 Overview
+This project provides a **modular Terraform framework** to deploy and manage core Azure infrastructure components.  
+It is designed for **repeatability, scalability, and security** across multiple environments (Dev, Prod).  
 
-This project provides a modular Terraform framework to automate Azure infrastructure deployment.
-It enables repeatable, secure, and environment-aware provisioning of core cloud resources — networking, compute, observability, security, and lifecycle management — for both development and production environments.
+---
 
-🚀 Key Features
+## ✨ Key Features
+- 🔐 **DevOps Module** → Resource Groups, Key Vault, Log Analytics integration  
+- 📦 **Infra Lifecycle** → Storage Accounts and lifecycle resources  
+- 🌍 **Networking** → Virtual Networks, Subnets, Network Security Groups  
+- 💻 **Virtual Machines** → Public IP, subnet attachment, and remote access users  
+- 📊 **Observability** → Log Analytics Workspace for monitoring and logging  
+- ⚙️ **Environment Separation** → `dev.tfvars` and `prod.tfvars` for consistent deployments  
+- 🛠 **Debug Scripts** → `.debug-dev.sh` and `.debug-prod.sh` for quick troubleshooting  
 
-DevOps Foundation – Creates resource groups, integrates with monitoring, and provisions Key Vault for secrets.
+---
 
-Infrastructure Lifecycle – Provides storage accounts and lifecycle management resources.
+## 🛠 Tech Stack
+- [Terraform](https://developer.hashicorp.com/terraform) (>=1.x)  
+- [AzureRM Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest)  
+- [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/)  
+- Bash (for scripts)  
 
-Networking – Deploys virtual networks, subnets, and security groups with rules for remote access.
+---
 
-Virtual Machines – Provisions VMs with public IPs, subnet attachment, and user access control.
+## 🚀 Getting Started
 
-Observability – Configures Azure Log Analytics Workspace for monitoring and logging.
-
-Environment Separation – dev.tfvars and prod.tfvars for consistent multi-environment deployments.
-
-Debugging Utilities – Helper scripts (.debug-dev.sh, .debug-prod.sh) for troubleshooting.
-
-🛠 Tech Stack
-
-Terraform (>=1.x)
-
-AzureRM Provider
-
-Azure CLI (for authentication)
-
-Bash (for scripts)
-
-📦 Installation & Setup
-1️⃣ Clone the Repository
+### 1️⃣ Clone the Repository
+```bash
 git clone https://github.com/jayWaikato/Azure_with_Terraform.git
 cd Azure_with_Terraform
+```
 
-2️⃣ Install Prerequisites
+### 2️⃣ Install Prerequisites
+- Install **Terraform**  
+- Install **Azure CLI**, then login:
+  ```bash
+  az login
+  ```
 
-Terraform
-
-Azure CLI
-
-Authenticate with Azure:
-
-az login
-
-3️⃣ Initialize Terraform
-
-Pick a module, e.g., network:
-
-cd network
+### 3️⃣ Initialize Terraform
+```bash
+cd network    # or vm, observability, etc.
 terraform init
+```
 
-4️⃣ Apply Configurations
-
-For dev:
-
+### 4️⃣ Deploy Infrastructure
+**Dev Environment**:
+```bash
 terraform apply -var-file=env/dev.tfvars
+```
 
-
-For production:
-
+**Prod Environment**:
+```bash
 terraform apply -var-file=env/prod.tfvars
+```
 
-📖 Usage Examples
-Example: Deploy a VM
+---
+
+## 🖥 Usage Example – VM Deployment
+```bash
 cd vm
 terraform apply -var-file=env/dev.tfvars
+```
 
+This will:  
+✔️ Create a VM with public IP  
+✔️ Attach it to the `snet-bravo` subnet  
+✔️ Configure remote access users  
 
-Provisions a VM with public IP
+---
 
-Attaches to existing subnet (snet-bravo)
+## 🏗 Architecture Diagram
 
-Configures remote access users
+```mermaid
+flowchart TB
+    subgraph Terraform["Terraform CLI"]
+        A[Terraform Apply/Plan]
+    end
 
-💡 Suggested diagram:
-Terraform CLI → AzureRM Provider → Azure Cloud
-![Architecture Diagram](./diagram.png)
+    subgraph Provider["AzureRM Provider"]
+        B[Azure Provider]
+    end
 
-Modules → Azure Services (VNet, NSG, VM, Key Vault, Storage, Log Analytics)
+    A --> B
 
-Debugging
+    subgraph Azure["Azure Cloud"]
+        C1[DevOps Module<br/>Resource Groups + Key Vault + Monitoring]
+        C2[Infra-Lifecycle<br/>Storage Accounts]
+        C3[Network<br/>VNet + Subnets + NSGs]
+        C4[VM Module<br/>Virtual Machines + Public IPs + Remote Access]
+        C5[Observability<br/>Log Analytics Workspace]
+    end
+
+    B --> C1
+    B --> C2
+    B --> C3
+    B --> C4
+    B --> C5
+
+    %% Environment swimlanes
+    subgraph Dev["Dev Environment"]
+        C1 --> D1
+        C2 --> D2
+        C3 --> D3
+        C4 --> D4
+        C5 --> D5
+    end
+
+    subgraph Prod["Prod Environment"]
+        C1 --> P1
+        C2 --> P2
+        C3 --> P3
+        C4 --> P4
+        C5 --> P5
+    end
+```
+
+---
+
+## 🔍 Debugging
+```bash
 ./.debug-dev.sh
 ./.debug-prod.sh
+```
 
-🏗 Architecture
-Root
- ├── devops/          # Resource groups, Key Vault, monitoring integration
- ├── infra-lifecycle/ # Storage accounts & lifecycle management
- ├── network/         # Virtual networks, subnets, NSGs
- ├── vm/              # VM provisioning with remote access
- ├── observability/   # Log Analytics Workspace
- └── env/             # Environment variables (dev/prod)
+---
+
+## 🏅 Suggested Badges
+(Add once CI/CD pipelines are integrated)  
+- ![Terraform](https://img.shields.io/badge/Terraform-1.x-blueviolet)  
+- ![Build](https://img.shields.io/github/actions/workflow/status/jayWaikato/Azure_with_Terraform/ci.yml)  
+- ![License](https://img.shields.io/github/license/jayWaikato/Azure_with_Terraform)  
+
+---
