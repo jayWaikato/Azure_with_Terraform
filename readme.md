@@ -129,9 +129,7 @@ flowchart TB
 
 ---
 
-## 🏅 Suggested Badges
+## 🏅 Badges
 - ![Terraform](https://img.shields.io/badge/Terraform-1.x-blueviolet)  
-- ![Build](https://img.shields.io/github/actions/workflow/status/jayWaikato/Azure_with_Terraform/ci.yml)  
-- ![License](https://img.shields.io/github/license/jayWaikato/Azure_with_Terraform)  
 
 ---
