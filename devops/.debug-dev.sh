@@ -1,4 +1,4 @@
-export ARM_SUBSCRIPTION_ID="0fcfc3a4-abe4-4a85-82a8-0d37d2a7e02d"
+export ARM_SUBSCRIPTION_ID=""
 
 export TF_VAR_application_name="devops"
 export TF_VAR_environment_name="dev"
